@@ -15,7 +15,9 @@ This is demo project to show some AWS Cloudformation capabilities:
     You can use cfn-lint to validate the format and dependency of your Cloudformation template
 
     If you have company rules for compliance purpose, please loock at AWS CloudFormation Guard project at https://github.com/aws-cloudformation/cloudformation-guard, this is particular useful if you want to avoid resource from being created if they are not compliant, for example:
+    
     if you execute (need to install cfn-guard first):
+
     cfn-guard validate --rules cfn-guard/required-tag-rule.guard --data ./templates/demo-ec2.json
 
     This will validate if EBS has required “usage” tag
@@ -27,15 +29,21 @@ This is demo project to show some AWS Cloudformation capabilities:
 3. Resource Update behavior
 
     Some time when attribute of a resource is being modified, the resource need to be destroyed and recreated. If you'd like to monitor this behavior, you should create changeset first before apply your update.
+    
     I will show you how to do it in my example
 
     Before going to the example, I created a script that can perform list of actions
 
     upload: upload template to AWS S3 bucket
+    
     create: create resource using template
+    
     update: create changeset when you make modification to your resource
+    
     list: list changeset of your Stackset
+    
     view: view changeset of your Stackset
+    
     apply: apply changeset to your Stackset
 
     Script also execute cfn-lint to validate template before any other activities.
@@ -45,9 +53,11 @@ This is demo project to show some AWS Cloudformation capabilities:
     Add tags:
 
     #first step is to upload your Cloudformation template to S3 
+    
     ./cfnctl upload
 
     #Create resource
+    
     ./cfnctl create
 
     You should get the response like following:
@@ -61,12 +71,17 @@ This is demo project to show some AWS Cloudformation capabilities:
     Example 2
 
     Review Changeset
+    
     Make some changes to your Cloudformation template, 
+    
     1. add new rule in security group
+    
     2. Change one of tags in stack-tags.json
 
     then
+    
     ./cfnctl upload
+    
     ./cfnctl update arn:aws:cloudformation:us-east-1:xxxxxxxxxxxx:stack/ec2-demo-stack/9a686cf0-6c5c-11ee-97af-0ecf5ea19ac5
 
     This will create Changset called DemoChangSet1. 
@@ -90,7 +105,9 @@ This is demo project to show some AWS Cloudformation capabilities:
     Example 3
 
     If you change SecurityGroup description which is immutatble, and execute
+    
     ./cfnctl upload 
+    
     ./cfnctl update arn:aws:cloudformation:us-east-1:xxxxxxxxxxxx:stack/ec2-demo-stack/9a686cf0-6c5c-11ee-97af-0ecf5ea19ac5
 
     ./cfnctl-view arn:aws:cloudformation:us-east-1:xxxxxxxxxxxx:stack/ec2-demo-stack/9a686cf0-6c5c-11ee-97af-0ecf5ea19ac5
@@ -121,7 +138,9 @@ This is demo project to show some AWS Cloudformation capabilities:
     ModuleS3 folder contains a Cloudformation module that can reused in other Cloudformation template. This S3 module leverage best practices to create a private S3 bucket.
 
     To deploy this module, go to folder ModuleS3 execute
+    
     cfn validate
+    
     cfn submit
 
     To use this S3 Module, add follow to the resource section in demo-ec2.json
