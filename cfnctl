@@ -1,0 +1,74 @@
+#!/bin/bash
+
+print_usage() {
+    echo "Error: Invalid argument!"
+    echo "usage: $0 [ upload | create | update ]" 
+}
+
+if [ $# -eq 0 ]; then 
+    print_usage
+fi
+
+cfn-lint templates/*.json
+if [ $? -eq 0 ]; then  
+# Read the params:
+    CONF_FILE="./config/cfnctl.conf"
+
+    source $CONF_FILE
+    echo $BUCKET_NAME
+    if [ "$1" == "upload" ]
+    then
+        echo "Uploading templates to the S3 bucket"
+        if [ $# -gt 1 ]; then
+            list=$(echo $@ | cut -d " " -f 2-) # removes the first argument ("upload")
+            for file in $list; do
+                echo $TEMPLATE_DIR/$file
+                aws s3 cp $TEMPLATE_DIR/$file s3://$BUCKET_NAME/$file 
+            done
+        else
+            aws s3 cp --recursive $TEMPLATE_DIR/ s3://$BUCKET_NAME/
+        fi
+
+    else
+        BUCKET_URL="https://$BUCKET_NAME.s3.$REGION.amazonaws.com" # Construct the S3 bucket URL from BUCKET_NAME and REGION
+        
+        if [ "$1" == "update" ]
+        then
+            aws cloudformation create-change-set --stack-name "$2" \
+            --change-set-name DemoChangeSet1 \
+            --template-url $BUCKET_URL/demo-ec2.json \
+            --parameters file://$STACK_PARAMS_FILE \
+            --tags file://$STACK_TAGS_FILE \
+
+        fi
+
+        if [ "$1" == "list" ]
+        then
+            aws cloudformation list-change-sets  --stack-name "$2"
+        fi
+
+
+        if [ "$1" == "view" ]
+        then
+            aws cloudformation describe-change-set --change-set-name DemoChangeSet1 --stack-name "$2"
+        fi
+
+        if [ "$1" == "apply" ]
+        then
+            aws cloudformation execute-change-set --change-set-name DemoChangeSet1 --stack-name "$2"
+        fi 
+        
+        if [ "$1" == "create" ]
+        then
+            aws cloudformation $1-stack \
+                --stack-name $STACK_NAME \
+                --template-url $BUCKET_URL/demo-ec2.json \
+                --capabilities CAPABILITY_NAMED_IAM \
+                --region $REGION \
+                --parameters file://$STACK_PARAMS_FILE \
+                --tags file://$STACK_TAGS_FILE \
+                --disable-rollback \
+        
+        fi
+    fi
+fi

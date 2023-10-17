@@ -1,0 +1,14 @@
+[
+    {
+      "ParameterKey": "InstanceType",
+      "ParameterValue": "m1.small"
+    },
+    {
+        "ParameterKey": "KeyName",
+        "ParameterValue": "cfn-demo"    
+    },
+    {
+        "ParameterKey": "VolumeSize",
+        "ParameterValue": "5"    
+    }
+  ]
