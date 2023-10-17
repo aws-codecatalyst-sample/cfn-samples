@@ -1,6 +1,7 @@
 This is demo project to show some AWS Cloudformation capabilities:
 
 1. Adding tags
+
     You can add tags to AWS resources when you create those resources. Tags can be added as part of Cloudformation template, or you can add tag during the resource creation.
     The benefits of adding tags during resource creation is to make sure that required tags are created according to company tagging policies, especially for cost and utilization tracking. Please check AWS cost allocation tag at https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html
     You can use external property file to define those required tags and include them when you run Cloudformation cli to create resources. It is recommended to include tagging in your CI/CD pipeline, so those tags can be controlled at organization level.
@@ -10,6 +11,7 @@ This is demo project to show some AWS Cloudformation capabilities:
     When running Cloudformation cli, you need specify this file with --tags, you can use similar approach for parameters, like AMI id, region or instance type. Parameters are defined in stack-params.json
 
 2. Template validation
+
     You can use cfn-lint to validate the format and dependency of your Cloudformation template
 
     If you have company rules for compliance purpose, please loock at AWS CloudFormation Guard project at https://github.com/aws-cloudformation/cloudformation-guard, this is particular useful if you want to avoid resource from being created if they are not compliant, for example:
@@ -23,6 +25,7 @@ This is demo project to show some AWS Cloudformation capabilities:
     https://aws.amazon.com/blogs/mt/introducing-aws-cloudformation-guard-2-0/
 
 3. Resource Update behavior
+
     Some time when attribute of a resource is being modified, the resource need to be destroyed and recreated. If you'd like to monitor this behavior, you should create changeset first before apply your update.
     I will show you how to do it in my example
 
